@@ -1,0 +1,34 @@
+
+name: build
+
+on: push
+
+jobs:
+
+  configure:
+    runs-on: ubuntu-latest
+    outputs:
+      uid_gid: ${{ steps.get-user.outputs.uid_gid }}
+    steps:
+      - id: get-user
+        run: echo "::set-output name=uid_gid::$(id -u):$(id -g)"
+
+  my_job:
+    needs: configure
+    runs-on: ubuntu-latest
+    container:
+      image: gmacario/build-yocto
+      options: --user ${{ needs.configure.outputs.uid_gid }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Produce stuff
+      run: echo "Hello World!" > some_output_file.txt
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: result
+        path: some_output_file.txt
+          
+
+

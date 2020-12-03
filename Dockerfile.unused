@@ -1,0 +1,5 @@
+FROM debian:10
+
+RUN echo "hello" > /look_at_this_file
+
+
